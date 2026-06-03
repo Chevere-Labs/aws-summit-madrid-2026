@@ -63,7 +63,7 @@ const defaultFilters: Filters = {
 
 function AppContent() {
   const [filters, setFilters] = useState<Filters>(defaultFilters)
-  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [viewMode, setViewMode] = useState<ViewMode>('calendar')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const { isFavorite } = useFavorites()
 

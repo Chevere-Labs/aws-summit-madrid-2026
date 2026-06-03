@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef, useState, useEffect, useCallback } from 'react'
 import type { Session } from '../types'
 
 interface CalendarViewProps {
@@ -30,6 +30,30 @@ const TIME_SLOTS = [
 ]
 
 export function CalendarView({ sessions, onSelect, isFavorite }: CalendarViewProps) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 10)
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
+  }, [])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    checkScroll()
+    el.addEventListener('scroll', checkScroll, { passive: true })
+    const ro = new ResizeObserver(checkScroll)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', checkScroll)
+      ro.disconnect()
+    }
+  }, [checkScroll])
+
   const rooms = useMemo(() => {
     const roomSet = new Set<string>()
     for (const s of sessions) if (s.room) roomSet.add(s.room)
@@ -61,43 +85,47 @@ export function CalendarView({ sessions, onSelect, isFavorite }: CalendarViewPro
   }
 
   return (
-    <div className="calendar-view">
-      <div className="cal-grid" style={{ gridTemplateColumns: cols }}>
-        <div className="cal-hdr cal-corner">Time / Room</div>
-        {rooms.map(r => (
-          <div key={r} className="cal-hdr" title={r}>{shortRoom(r)}</div>
-        ))}
-      </div>
+    <div className="calendar-wrapper">
+      {canScrollLeft && <div className="scroll-indicator left"><span>‹</span></div>}
+      {canScrollRight && <div className="scroll-indicator right"><span>›</span></div>}
+      <div className="calendar-scroll" ref={scrollRef}>
+        <div className="cal-grid" style={{ gridTemplateColumns: cols }}>
+          <div className="cal-hdr cal-corner">Time / Room</div>
+          {rooms.map(r => (
+            <div key={r} className="cal-hdr" title={r}>{shortRoom(r)}</div>
+          ))}
+        </div>
 
-      <div className="cal-body">
-        {TIME_SLOTS.map(time => {
-          const atTime = sessions.filter(s => s.time === time)
-          if (atTime.length === 0) return null
-          return (
-            <div key={time} className="cal-row" style={{ gridTemplateColumns: cols }}>
-              <div className="cal-time-label"><span className="time-text">{time}</span></div>
-              {rooms.map(room => {
-                const ss = atTime.filter(s => s.room === room)
-                return (
-                  <div key={room} className="cal-cell">
-                    {ss.map(s => (
-                      <div
-                        key={s.id}
-                        className={`cal-session ${isFavorite(s.id) ? 'cal-fav' : ''}`}
-                        onClick={() => onSelect(s.id)}
-                      >
-                        <div className="cal-session-type">{s.type}</div>
-                        <div className="cal-session-title">{s.title}</div>
-                        <div className="cal-session-time">{time}–{addMinutes(time, s.length)}</div>
-                        <div className="cal-session-speaker">{s.speakers[0]?.split(',')[0] || ''}</div>
-                      </div>
-                    ))}
-                  </div>
-                )
-              })}
-            </div>
-          )
-        })}
+        <div className="cal-body">
+          {TIME_SLOTS.map(time => {
+            const atTime = sessions.filter(s => s.time === time)
+            if (atTime.length === 0) return null
+            return (
+              <div key={time} className="cal-row" style={{ gridTemplateColumns: cols }}>
+                <div className="cal-time-label"><span className="time-text">{time}</span></div>
+                {rooms.map(room => {
+                  const ss = atTime.filter(s => s.room === room)
+                  return (
+                    <div key={room} className="cal-cell">
+                      {ss.map(s => (
+                        <div
+                          key={s.id}
+                          className={`cal-session ${isFavorite(s.id) ? 'cal-fav' : ''}`}
+                          onClick={() => onSelect(s.id)}
+                        >
+                          <div className="cal-session-type">{s.type}</div>
+                          <div className="cal-session-title">{s.title}</div>
+                          <div className="cal-session-time">{time}–{addMinutes(time, s.length)}</div>
+                          <div className="cal-session-speaker">{s.speakers[0]?.split(',')[0] || ''}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

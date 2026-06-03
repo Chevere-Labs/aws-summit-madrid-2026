@@ -1,73 +1,88 @@
-# React + TypeScript + Vite
+# AWS Summit Madrid 2026 — Session Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Planificador de sesiones para el **AWS Summit Madrid 2026** (4 de junio, IFEMA Madrid). Explora y organiza las +140 sesiones del evento con búsqueda, filtros, vista calendario y favoritos.
 
-Currently, two official plugins are available:
+## 🚀 Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+[https://chevere-labs.github.io/aws-summit-madrid-2026/](https://chevere-labs.github.io/aws-summit-madrid-2026/)
 
-## React Compiler
+## ✨ Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Feature | Descripción |
+|---------|-------------|
+| **🔍 Búsqueda** | Busca en tiempo real por título, descripción, ponente, sala o código de sesión |
+| **🎯 Filtros** | 10 filtros combinables: Tipo, Nivel, Sala, Horario, Industria, Rol, Servicio AWS, Área de interés, Ponente, Características |
+| **⭐ Favoritos** | Marca sesiones como favoritas — se guardan en localStorage |
+| **📅 Calendario** | Matriz horario × sala con hora de inicio y fin calculada. Scroll horizontal indicado con flechas animadas |
+| **🗂️ Grid** | Vista de tarjetas con información rápida de cada sesión |
+| **📋 Detalle** | Modal con descripción completa, ponentes, etiquetas y metadatos |
+| **🌙 Tema oscuro** | Interfaz con diseño oscuro optimizado para largas sesiones de exploración |
 
-## Expanding the ESLint configuration
+## 🛠️ Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19** + **TypeScript**
+- **Vite 8** (build tool)
+- **gh-pages** (deploy)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🧑‍💻 Desarrollo
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# Instalar dependencias
+cd summit-planner && npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Iniciar servidor de desarrollo
+npm run dev
+
+# Build de producción
+npm run build
+
+# Previsualizar build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📦 Estructura del proyecto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+summit-planner/
+├── src/
+│   ├── components/        # Componentes React
+│   │   ├── SearchBar.tsx
+│   │   ├── FilterBar.tsx
+│   │   ├── TalkCard.tsx
+│   │   ├── TalkGrid.tsx
+│   │   ├── TalkDetail.tsx
+│   │   ├── CalendarView.tsx
+│   │   └── StatsBar.tsx
+│   ├── hooks/
+│   │   └── useFavorites.tsx   # Context de favoritos + localStorage
+│   ├── data/
+│   │   └── sessions.json      # Datos de las 143 sesiones
+│   ├── types.ts
+│   ├── App.tsx
+│   ├── App.css
+│   └── main.tsx
+├── public/
+├── index.html
+├── package.json
+└── vite.config.ts
+```
+
+## 🚢 Deploy
+
+```bash
+cd summit-planner
+npm run deploy
+```
+
+Esto ejecuta el build y publica la carpeta `dist/` en la rama `gh-pages` del repositorio.
+
+## 📊 Datos
+
+Las 143 sesiones se obtuvieron desde la app oficial **AWS Events** mediante la API `prod-api.awseventservices.com`. Los datos incluyen horarios, salas, ponentes, descripciones, niveles, industrias, servicios AWS y áreas de interés.
+
+## 🏗️ Hecho con
+
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [mitmproxy](https://mitmproxy.org/) (para captura de datos)

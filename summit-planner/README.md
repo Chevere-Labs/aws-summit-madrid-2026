@@ -4,7 +4,7 @@ Multi-city session planner for AWS Summit conferences. Explore and organize sess
 
 ## Demo
 
-[https://chevere-labs.github.io/conference-session-planner/](https://chevere-labs.github.io/conference-session-planner/)
+[https://chevere-labs.github.io/aws-summit-madrid-2026/](https://chevere-labs.github.io/aws-summit-madrid-2026/)
 
 ## Features
 

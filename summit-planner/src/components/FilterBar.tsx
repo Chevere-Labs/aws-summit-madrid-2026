@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import type { Filters } from '../types'
 
 interface FilterBarProps {
@@ -46,6 +46,23 @@ function MultiSelect({
   onChange: (values: string[]) => void
 }) {
   const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [open])
 
   const toggle = (value: string) => {
     if (selected.includes(value)) {
@@ -56,7 +73,7 @@ function MultiSelect({
   }
 
   return (
-    <div className="multi-select" onMouseLeave={() => setOpen(false)}>
+    <div className="multi-select" ref={ref}>
       <button
         className={`multi-select-trigger ${selected.length ? 'has-selection' : ''}`}
         onClick={() => setOpen(!open)}

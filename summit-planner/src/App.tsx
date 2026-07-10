@@ -151,6 +151,15 @@ function AppContent({ cityId, onCityChange }: { cityId: string, onCityChange: (i
               selected={city}
               onSelect={handleCityChange}
             />
+            <a
+              className="github-star"
+              href="https://github.com/Chevere-Labs/aws-summit-madrid-2026"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Star on GitHub"
+            >
+              ★ GitHub
+            </a>
           </div>
         </div>
         <AppInfo version={APP_VERSION} lastFetched={city.lastFetched} />

@@ -71,13 +71,12 @@ export function AppInfo({ version, lastFetched }: AppInfoProps) {
     <div className="app-info">
       <span className="app-info-version">v{version}</span>
       <span className="app-info-sep">·</span>
-      <span className="app-info-label">Última actualización:</span>
       <button
         className="app-info-date"
         onClick={toggleMode}
         title={mode === 'relative' ? 'Mostrar fecha absoluta' : 'Mostrar tiempo relativo'}
       >
-        {dateText}
+        Datos actualizados {mode === 'relative' ? '' : 'el '}{dateText}
       </button>
     </div>
   )

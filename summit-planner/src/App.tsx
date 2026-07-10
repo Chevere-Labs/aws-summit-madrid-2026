@@ -98,7 +98,7 @@ function AppContent() {
     <div className="app">
       <header className="app-header">
         <div className="header-top">
-          <h1 className="app-title">AWS Summit Madrid 2026</h1>
+          <h1 className="app-title">AWS Summit Bogotá 2026</h1>
           <div className="header-controls">
             <span className="favorite-count">★ {favCount}</span>
             <div className="view-toggle">

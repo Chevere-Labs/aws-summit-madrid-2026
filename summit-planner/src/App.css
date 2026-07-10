@@ -98,6 +98,41 @@ body {
   color: #000;
 }
 
+/* APP INFO */
+.app-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.app-info-version {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.app-info-sep {
+  opacity: 0.5;
+}
+
+.app-info-date {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.app-info-date:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
 /* SEARCH */
 .search-bar {
   position: relative;

@@ -5,6 +5,7 @@ export interface CityConfig {
   timezone: string
   date: string
   roomCategories: Record<string, string[]>
+  lastFetched: string
 }
 
 export interface Session {

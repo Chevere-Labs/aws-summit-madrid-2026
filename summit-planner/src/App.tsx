@@ -11,8 +11,11 @@ import { CalendarView } from './components/CalendarView'
 import { TalkDetail } from './components/TalkDetail'
 import { StatsBar } from './components/StatsBar'
 import { CitySelector } from './components/CitySelector'
+import { AppInfo } from './components/AppInfo'
 import { useFavorites } from './hooks/useFavorites'
 import './App.css'
+
+const APP_VERSION = '6.7.10a'
 
 const cities: CityConfig[] = citiesData as unknown as CityConfig[]
 
@@ -150,6 +153,7 @@ function AppContent({ cityId, onCityChange }: { cityId: string, onCityChange: (i
             />
           </div>
         </div>
+        <AppInfo version={APP_VERSION} lastFetched={city.lastFetched} />
         <SearchBar
           value={filters.search}
           onChange={v => setFilters(prev => ({ ...prev, search: v }))}

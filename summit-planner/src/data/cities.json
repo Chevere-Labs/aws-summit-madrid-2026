@@ -10,7 +10,8 @@
       "Expo": ["Expo"],
       "Salas": ["Sala"],
       "Keynote": ["Keynote"]
-    }
+    },
+    "lastFetched": "2026-07-09T14:46:00"
   },
   {
     "id": "madrid",
@@ -23,6 +24,7 @@
       "Theatres": ["Theatre", "AWSome Stories"],
       "Workshops": ["Workshop"],
       "Community": ["Community", "Developer", "Chalk Talk"]
-    }
+    },
+    "lastFetched": "2026-06-04T09:00:00"
   }
 ]

@@ -152,7 +152,7 @@ function AppContent({ cityId, onCityChange }: { cityId: string, onCityChange: (i
         </div>
         <SearchBar
           value={filters.search}
-          onChange={v => setFilter('search', [v])}
+          onChange={v => setFilters(prev => ({ ...prev, search: v }))}
         />
         <FilterBar
           filters={filters}

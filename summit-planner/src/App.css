@@ -829,3 +829,68 @@ body {
     min-width: 130px;
   }
 }
+
+/* CITY SELECTOR */
+.city-selector {
+  position: relative;
+}
+
+.city-selector-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s;
+}
+
+.city-selector-trigger:hover {
+  border-color: var(--accent);
+}
+
+.city-selector-arrow {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.city-selector-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 200;
+  min-width: 220px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-top: 4px;
+  padding: 4px 0;
+}
+
+.city-selector-option {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.city-selector-option:hover {
+  background: var(--bg-hover);
+}
+
+.city-selector-option.active {
+  color: var(--accent);
+  font-weight: 600;
+}

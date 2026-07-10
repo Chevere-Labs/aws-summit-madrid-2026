@@ -1,10 +1,11 @@
 import { useMemo, useRef, useState, useEffect, useCallback } from 'react'
-import type { Session } from '../types'
+import type { Session, CityConfig } from '../types'
 
 interface CalendarViewProps {
   sessions: Session[]
   onSelect: (id: string) => void
   isFavorite: (id: string) => boolean
+  city: CityConfig
 }
 
 function addMinutes(time: string, minutes: number): string {
@@ -17,19 +18,58 @@ function shortRoom(room: string): string {
   return room.replace(/^Floor \w+ \w+,\s*/, '').replace(/^Floor \w+,\s*/, '')
 }
 
-const TIME_SLOTS = [
-  '09:00', '09:15', '09:30', '09:45',
-  '10:00', '10:15', '10:30', '10:45',
-  '11:00', '11:15', '11:30', '11:45',
-  '12:00', '12:15', '12:30', '12:45',
-  '13:00', '13:15', '13:30', '13:45',
-  '14:00', '14:15', '14:30', '14:45',
-  '15:00', '15:15', '15:30', '15:45',
-  '16:00', '16:15', '16:30', '16:45',
-  '17:00', '17:15', '17:30',
-]
+function generateTimeSlots(sessions: Session[]): string[] {
+  if (sessions.length === 0) return []
+  let minMinutes = Infinity
+  let maxMinutes = 0
+  for (const s of sessions) {
+    const [h, m] = s.time.split(':').map(Number)
+    const start = h * 60 + m
+    const end = start + s.length
+    if (start < minMinutes) minMinutes = start
+    if (end > maxMinutes) maxMinutes = end
+  }
+  const slots: string[] = []
+  for (let t = minMinutes; t <= maxMinutes; t += 15) {
+    slots.push(`${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`)
+  }
+  return slots
+}
 
-export function CalendarView({ sessions, onSelect, isFavorite }: CalendarViewProps) {
+function categorizeRooms(rooms: string[], roomCategories: Record<string, string[]>): string[] {
+  const categoryOrder: string[] = []
+  const other: string[] = []
+
+  for (const category of Object.keys(roomCategories)) {
+    categoryOrder.push(category)
+  }
+
+  const categorizedByCategory: Record<string, string[]> = {}
+  for (const cat of categoryOrder) {
+    categorizedByCategory[cat] = []
+  }
+
+  for (const r of rooms) {
+    let matched = false
+    for (const [category, keywords] of Object.entries(roomCategories)) {
+      if (keywords.some(k => r.includes(k))) {
+        categorizedByCategory[category].push(r)
+        matched = true
+        break
+      }
+    }
+    if (!matched) other.push(r)
+  }
+
+  const result: string[] = []
+  for (const cat of categoryOrder) {
+    result.push(...categorizedByCategory[cat])
+  }
+  result.push(...other)
+  return result
+}
+
+export function CalendarView({ sessions, onSelect, isFavorite, city }: CalendarViewProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
@@ -54,23 +94,13 @@ export function CalendarView({ sessions, onSelect, isFavorite }: CalendarViewPro
     }
   }, [checkScroll])
 
+  const timeSlots = useMemo(() => generateTimeSlots(sessions), [sessions])
+
   const rooms = useMemo(() => {
     const roomSet = new Set<string>()
     for (const s of sessions) if (s.room) roomSet.add(s.room)
-    const breakout: string[] = []
-    const theatres: string[] = []
-    const workshops: string[] = []
-    const community: string[] = []
-    const other: string[] = []
-    for (const r of roomSet) {
-      if (r.includes('Breakout')) breakout.push(r)
-      else if (r.includes('Theatre') || r.includes('AWSome Stories')) theatres.push(r)
-      else if (r.includes('Workshop')) workshops.push(r)
-      else if (r.includes('Community') || r.includes('Developer') || r.includes('Chalk Talk')) community.push(r)
-      else other.push(r)
-    }
-    return [...breakout, ...theatres, ...workshops, ...community, ...other]
-  }, [sessions])
+    return categorizeRooms([...roomSet], city.roomCategories)
+  }, [sessions, city.roomCategories])
 
   const cols = `70px repeat(${rooms.length}, minmax(160px, 1fr))`
 
@@ -97,7 +127,7 @@ export function CalendarView({ sessions, onSelect, isFavorite }: CalendarViewPro
         </div>
 
         <div className="cal-body">
-          {TIME_SLOTS.map(time => {
+          {timeSlots.map(time => {
             const atTime = sessions.filter(s => s.time === time)
             if (atTime.length === 0) return null
             return (

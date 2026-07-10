@@ -1,0 +1,28 @@
+[
+  {
+    "id": "bogota",
+    "name": "AWS Summit Bogotá 2026",
+    "sessionsFile": "bogota-sessions.json",
+    "timezone": "America/Bogota",
+    "date": "2026-07-30",
+    "roomCategories": {
+      "Escenarios": ["Escenario"],
+      "Expo": ["Expo"],
+      "Salas": ["Sala"],
+      "Keynote": ["Keynote"]
+    }
+  },
+  {
+    "id": "madrid",
+    "name": "AWS Summit Madrid 2026",
+    "sessionsFile": "madrid-sessions.json",
+    "timezone": "Europe/Madrid",
+    "date": "2026-06-04",
+    "roomCategories": {
+      "Breakout": ["Breakout"],
+      "Theatres": ["Theatre", "AWSome Stories"],
+      "Workshops": ["Workshop"],
+      "Community": ["Community", "Developer", "Chalk Talk"]
+    }
+  }
+]

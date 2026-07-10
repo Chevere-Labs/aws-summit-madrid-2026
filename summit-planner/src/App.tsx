@@ -1,6 +1,8 @@
-import { useState, useMemo } from 'react'
-import sessionsData from './data/sessions.json'
-import type { Session, Filters, ViewMode } from './types'
+import { useState, useMemo, useCallback } from 'react'
+import citiesData from './data/cities.json'
+import bogotaSessions from './data/bogota-sessions.json'
+import madridSessions from './data/madrid-sessions.json'
+import type { Session, Filters, ViewMode, CityConfig } from './types'
 import { FavoritesProvider } from './hooks/useFavorites'
 import { SearchBar } from './components/SearchBar'
 import { FilterBar } from './components/FilterBar'
@@ -8,10 +10,26 @@ import { TalkGrid } from './components/TalkGrid'
 import { CalendarView } from './components/CalendarView'
 import { TalkDetail } from './components/TalkDetail'
 import { StatsBar } from './components/StatsBar'
+import { CitySelector } from './components/CitySelector'
 import { useFavorites } from './hooks/useFavorites'
 import './App.css'
 
-const sessions = sessionsData as Session[]
+const cities: CityConfig[] = citiesData as unknown as CityConfig[]
+
+const sessionsByCity: Record<string, Session[]> = {
+  bogota: bogotaSessions as Session[],
+  madrid: madridSessions as Session[],
+}
+
+const DEFAULT_CITY_ID = 'bogota'
+
+function getStoredCityId(): string {
+  try {
+    return localStorage.getItem('selectedCity') || DEFAULT_CITY_ID
+  } catch {
+    return DEFAULT_CITY_ID
+  }
+}
 
 function getAll<T>(key: keyof Session, sessions: Session[]): T[] {
   const values = new Set<T>()
@@ -61,11 +79,19 @@ const defaultFilters: Filters = {
   sessionFeatures: [],
 }
 
-function AppContent() {
+function AppContent({ cityId, onCityChange }: { cityId: string, onCityChange: (id: string) => void }) {
   const [filters, setFilters] = useState<Filters>(defaultFilters)
   const [viewMode, setViewMode] = useState<ViewMode>('calendar')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const { isFavorite } = useFavorites()
+
+  const city = useMemo(() => cities.find(c => c.id === cityId) || cities[0], [cityId])
+  const sessions = useMemo(() => sessionsByCity[city.id] || [], [city])
+
+  const handleCityChange = useCallback((newCity: CityConfig) => {
+    try { localStorage.setItem('selectedCity', newCity.id) } catch { /* ignore */ }
+    onCityChange(newCity.id)
+  }, [onCityChange])
 
   const allTypes = getAll<string>('type', sessions)
   const allLevels = getAll<string>('level', sessions)
@@ -78,7 +104,7 @@ function AppContent() {
   const allSpeakers = getAll<string>('speakers', sessions)
   const allFeatures = getAll<string>('sessionFeatures', sessions)
 
-  const filtered = useMemo(() => filterSessions(sessions, filters), [filters])
+  const filtered = useMemo(() => filterSessions(sessions, filters), [sessions, filters])
   const selectedSession = selectedId ? sessions.find(s => s.id === selectedId) : null
 
   const setFilter = (key: keyof Filters, value: string[]) => {
@@ -98,7 +124,7 @@ function AppContent() {
     <div className="app">
       <header className="app-header">
         <div className="header-top">
-          <h1 className="app-title">AWS Summit Bogotá 2026</h1>
+          <h1 className="app-title">{city.name}</h1>
           <div className="header-controls">
             <span className="favorite-count">★ {favCount}</span>
             <div className="view-toggle">
@@ -117,6 +143,11 @@ function AppContent() {
                 ▤
               </button>
             </div>
+            <CitySelector
+              cities={cities}
+              selected={city}
+              onSelect={handleCityChange}
+            />
           </div>
         </div>
         <SearchBar
@@ -158,6 +189,7 @@ function AppContent() {
             sessions={filtered}
             onSelect={setSelectedId}
             isFavorite={isFavorite}
+            city={city}
           />
         )}
       </main>
@@ -173,9 +205,11 @@ function AppContent() {
 }
 
 export default function App() {
+  const [cityId, setCityId] = useState<string>(getStoredCityId)
+
   return (
-    <FavoritesProvider>
-      <AppContent />
+    <FavoritesProvider key={cityId} cityId={cityId}>
+      <AppContent cityId={cityId} onCityChange={setCityId} />
     </FavoritesProvider>
   )
 }

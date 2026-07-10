@@ -1,3 +1,12 @@
+export interface CityConfig {
+  id: string
+  name: string
+  sessionsFile: string
+  timezone: string
+  date: string
+  roomCategories: Record<string, string[]>
+}
+
 export interface Session {
   id: string
   title: string

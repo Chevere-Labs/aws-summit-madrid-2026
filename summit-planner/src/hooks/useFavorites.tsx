@@ -9,10 +9,15 @@ interface FavoritesContextType {
 
 const FavoritesContext = createContext<FavoritesContextType | null>(null)
 
-export function FavoritesProvider({ children }: { children: ReactNode }) {
+interface FavoritesProviderProps {
+  children: ReactNode
+  cityId: string
+}
+
+export function FavoritesProvider({ children, cityId }: FavoritesProviderProps) {
   const [favorites, setFavorites] = useState<Set<string>>(() => {
     try {
-      const stored = localStorage.getItem('favorites')
+      const stored = localStorage.getItem(`favorites_${cityId}`)
       return stored ? new Set(JSON.parse(stored)) : new Set()
     } catch {
       return new Set()
@@ -20,8 +25,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   })
 
   useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify([...favorites]))
-  }, [favorites])
+    localStorage.setItem(`favorites_${cityId}`, JSON.stringify([...favorites]))
+  }, [favorites, cityId])
 
   const toggle = useCallback((id: string) => {
     setFavorites(prev => {

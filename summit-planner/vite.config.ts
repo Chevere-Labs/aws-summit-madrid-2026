@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/aws-summit-madrid-2026/',
+  base: '/conference-session-planner/',
 })
